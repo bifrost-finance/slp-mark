@@ -3,7 +3,7 @@ import { ScheduleModule } from 'nest-schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import KsmService from './ksm.service';
-import { DotService } from './dot.service';
+import DotService from './dot.service';
 import { configService } from './config.service';
 
 @Module({
@@ -11,6 +11,10 @@ import { configService } from './config.service';
     TypeOrmModule.forRoot({
       name: 'kusama',
       ...configService.getKusamaDbConfig(),
+    }),
+    TypeOrmModule.forRoot({
+      name: 'polkadot',
+      ...configService.getPolkadotDbConfig(),
     }),
     TypeOrmModule.forRoot({
       name: 'kusama_mark',
