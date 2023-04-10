@@ -31,14 +31,14 @@ export default class KsmService extends NestSchedule {
   async kusamaScan() {
     console.log('kusama staking scan start!');
 
-    const wsProvider = new WsProvider('wss://rpc.polkadot.io');
+    const wsProvider = new WsProvider('wss://kusama-rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
 
     const stakingEras = await this.kusamaSlpDB
       .getRepository(StakingErapaids)
       .createQueryBuilder()
       .orderBy('block_timestamp', 'DESC')
-      .limit(56)
+      .limit(10)
       .getMany();
 
     await this.kusamaMarkDB
