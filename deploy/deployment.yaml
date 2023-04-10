@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: slp-mark
+    qcloud-app: slp-mark
+  name: slp-mark
+  namespace: slp
+spec:
+  selector:
+    matchLabels:
+      k8s-app: slp-mark
+      qcloud-app: slp-mark
+  template:
+    metadata:
+      labels:
+        k8s-app: slp-mark
+        qcloud-app: slp-mark
+    spec:
+      containers:
+      - image: harbor.liebi.com/slp/slp-mark:0dfba5d
+        imagePullPolicy: Always
+        name: slp-mark
+        resources:
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: 100m
+            memory: 456Mi
+        volumeMounts:
+        - mountPath: /app/.env
+          name: env
+          subPath: .env
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: harbor
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: slp-mark-env
+        name: env

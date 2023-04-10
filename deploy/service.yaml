@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: slp-mark
+    qcloud-app: slp-mark
+  name: slp-mark
+  namespace: slp
+spec:
+  ports:
+  - nodePort: 31000
+    port: 31000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    k8s-app: slp-mark
+    qcloud-app: slp-mark
+  type: NodePort
