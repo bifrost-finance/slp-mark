@@ -100,22 +100,25 @@ export default class DotService extends NestSchedule {
               })
               .orderBy('era', 'DESC')
               .getMany();
-            const { all_reward_points, active_time } = validatorHistory.reduce(
-              (acc, item) => {
-                if (item.reward_points !== '0') {
-                  acc.all_reward_points =
-                    acc.all_reward_points + Number(item.reward_points);
-                }
-                if (!!item.is_active) {
-                  acc.active_time = acc.active_time + 1;
-                }
-                return acc;
-              },
-              {
-                all_reward_points: 0,
-                active_time: 0,
-              },
-            );
+            const { all_reward_points, active_time, all_reward_points_time } =
+              validatorHistory.reduce(
+                (acc, item) => {
+                  if (item.reward_points !== '0') {
+                    acc.all_reward_points =
+                      acc.all_reward_points + Number(item.reward_points);
+                    acc.all_reward_points_time = acc.all_reward_points_time + 1;
+                  }
+                  if (!!item.is_active) {
+                    acc.active_time = acc.active_time + 1;
+                  }
+                  return acc;
+                },
+                {
+                  all_reward_points: 0,
+                  active_time: 0,
+                  all_reward_points_time: 0,
+                },
+              );
             const nominator = await Promise.all(
               others.map(async ({ who }) => {
                 const ledger = (
@@ -137,7 +140,7 @@ export default class DotService extends NestSchedule {
               await api.query.staking.slashingSpans(address)
             ).toJSON() as any;
             const average_reward_points = new BigNumber(all_reward_points)
-              .div(7)
+              .div(all_reward_points_time || 1)
               .toFixed();
             const active_rate = new BigNumber(active_time).div(7).toFixed();
             const rank = total
@@ -231,22 +234,25 @@ export default class DotService extends NestSchedule {
               })
               .orderBy('era', 'DESC')
               .getMany();
-            const { all_reward_points, active_time } = validatorHistory.reduce(
-              (acc, item) => {
-                if (item.reward_points !== '0') {
-                  acc.all_reward_points =
-                    acc.all_reward_points + Number(item.reward_points);
-                }
-                if (!!item.is_active) {
-                  acc.active_time = acc.active_time + 1;
-                }
-                return acc;
-              },
-              {
-                all_reward_points: 0,
-                active_time: 0,
-              },
-            );
+            const { all_reward_points, active_time, all_reward_points_time } =
+              validatorHistory.reduce(
+                (acc, item) => {
+                  if (item.reward_points !== '0') {
+                    acc.all_reward_points =
+                      acc.all_reward_points + Number(item.reward_points);
+                    acc.all_reward_points_time = acc.all_reward_points_time + 1;
+                  }
+                  if (!!item.is_active) {
+                    acc.active_time = acc.active_time + 1;
+                  }
+                  return acc;
+                },
+                {
+                  all_reward_points: 0,
+                  active_time: 0,
+                  all_reward_points_time: 0,
+                },
+              );
             const nominator = await Promise.all(
               others.map(async ({ who }) => {
                 const ledger = (
@@ -268,7 +274,7 @@ export default class DotService extends NestSchedule {
               await api.query.staking.slashingSpans(address)
             ).toJSON() as any;
             const average_reward_points = new BigNumber(all_reward_points)
-              .div(7)
+              .div(all_reward_points_time || 1)
               .toFixed();
             const active_rate = new BigNumber(active_time).div(7).toFixed();
             const rank = new BigNumber(average_reward_points)
