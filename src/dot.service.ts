@@ -68,16 +68,40 @@ export default class DotService extends NestSchedule {
     const eras = stakingEras.filter(
       (item) => !kusamaEra.map((item) => item.era).includes(item.era_index),
     );
-    console.log('eras:', eras.length);
+    const nominators = await api.query.staking.nominators.entries();
+
+    const approvalStake = {};
+    if (eras.length > 0) {
+      await Promise.all(
+        nominators.map(async (nominator) => {
+          const address = nominator[0].toHuman()[0];
+          const { amount } = (
+            await api.query.balances.locks(address)
+          ).toJSON()[0] as any;
+          const { targets } = nominator[1].toJSON() as any;
+          targets.map((item) => {
+            if (approvalStake[item]) {
+              approvalStake[item] = new BigNumber(amount)
+                .plus(approvalStake[item])
+                .toString();
+            } else {
+              approvalStake[item] = amount;
+            }
+          });
+        }),
+      );
+    }
+
+    console.log('eras:', eras.length, Object.keys(approvalStake).length);
 
     for (let i = 0; i < eras.length; i++) {
       const era = eras[eras.length - i - 1].era_index;
+      console.log('era:', era);
 
       const validators = await api.query.staking.validators.entries();
       const { individual: rewardValidators } = (
         await api.query.staking.erasRewardPoints(era)
       ).toJSON() as any;
-      console.log('era:', era);
 
       const validatorsActiveEraData = await Promise.all(
         validators.map(async (validator) => {
@@ -88,7 +112,7 @@ export default class DotService extends NestSchedule {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
             const identity = await getIdentity(address, api);
-            const { total, others } = (
+            const { total } = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
             const validatorHistory = await this.kusamaMarkDB
@@ -119,22 +143,6 @@ export default class DotService extends NestSchedule {
                   all_reward_points_time: 0,
                 },
               );
-            const nominator = await Promise.all(
-              others.map(async ({ who }) => {
-                const ledger = (
-                  await api.query.staking.ledger(who)
-                ).toJSON() as any;
-                if (!ledger?.active) {
-                  const bondedAddress = await api.query.staking.bonded(who);
-                  const bonderdLedger = (
-                    await api.query.staking.ledger(bondedAddress.toString())
-                  ).toJSON() as any;
-                  return bonderdLedger?.active;
-                } else {
-                  return ledger?.active;
-                }
-              }),
-            );
 
             const slashingSpans = (
               await api.query.staking.slashingSpans(address)
@@ -164,10 +172,7 @@ export default class DotService extends NestSchedule {
               id: address + '-' + era,
               validator: address,
               era,
-              nominator: nominator.reduce(
-                (acc, item) => new BigNumber(acc).plus(item).toString(),
-                '0',
-              ),
+              nominator: approvalStake[address],
               total_bond: new BigNumber(total).toString(),
               is_active,
               reward_points,
@@ -222,7 +227,7 @@ export default class DotService extends NestSchedule {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
             const identity = await getIdentity(address, api);
-            const { total, others } = (
+            const { total } = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
             const validatorHistory = await this.kusamaMarkDB
@@ -253,22 +258,6 @@ export default class DotService extends NestSchedule {
                   all_reward_points_time: 0,
                 },
               );
-            const nominator = await Promise.all(
-              others.map(async ({ who }) => {
-                const ledger = (
-                  await api.query.staking.ledger(who)
-                ).toJSON() as any;
-                if (!ledger?.active) {
-                  const bondedAddress = await api.query.staking.bonded(who);
-                  const bonderdLedger = (
-                    await api.query.staking.ledger(bondedAddress.toString())
-                  ).toJSON() as any;
-                  return bonderdLedger?.active;
-                } else {
-                  return ledger?.active;
-                }
-              }),
-            );
 
             const slashingSpans = (
               await api.query.staking.slashingSpans(address)
@@ -291,12 +280,7 @@ export default class DotService extends NestSchedule {
               .div(kusamaEra.min_bond)
               .div(
                 0.9 +
-                  new BigNumber(
-                    nominator.reduce(
-                      (acc, item) => new BigNumber(acc).plus(item).toString(),
-                      '0',
-                    ),
-                  )
+                  new BigNumber(approvalStake[address] || '0')
                     .div(kusamaEra.min_approval_stake)
                     .toNumber(),
               )
@@ -307,10 +291,7 @@ export default class DotService extends NestSchedule {
               id: address + '-' + era,
               validator: address,
               era,
-              nominator: nominator.reduce(
-                (acc, item) => new BigNumber(acc).plus(item).toString(),
-                '0',
-              ),
+              nominator: approvalStake[address] || '0',
               total_bond: new BigNumber(total).toString(),
               is_active,
               reward_points,
