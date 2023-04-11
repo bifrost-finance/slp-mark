@@ -38,7 +38,7 @@ export default class KsmService extends NestSchedule {
       .getRepository(StakingErapaids)
       .createQueryBuilder()
       .orderBy('block_timestamp', 'DESC')
-      .limit(10)
+      .limit(56)
       .getMany();
 
     await this.kusamaMarkDB
@@ -147,7 +147,8 @@ export default class KsmService extends NestSchedule {
                       Math.pow(
                         new BigNumber(active_time).div(28).toNumber(),
                         1 / 3,
-                      ),
+                      ) /
+                        10,
                   )
                   .div(total)
                   .multipliedBy(1000000000)
@@ -276,12 +277,18 @@ export default class KsmService extends NestSchedule {
                   Math.pow(
                     new BigNumber(active_time).div(28).toNumber(),
                     1 / 3,
-                  ),
+                  ) /
+                    10,
               )
               .div(kusamaEra.min_bond)
               .div(
                 0.9 +
-                  new BigNumber(kusamaEra.average_bond)
+                  new BigNumber(
+                    nominator.reduce(
+                      (acc, item) => new BigNumber(acc).plus(item).toString(),
+                      '0',
+                    ),
+                  )
                     .div(kusamaEra.min_approval_stake)
                     .toNumber(),
               )
