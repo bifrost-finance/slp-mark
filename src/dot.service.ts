@@ -70,29 +70,29 @@ export default class DotService extends NestSchedule {
     );
     const nominators = await api.query.staking.nominators.entries();
 
-    const approvalStake = {};
-    if (eras.length > 0) {
-      await Promise.all(
-        nominators.map(async (nominator) => {
-          const address = nominator[0].toHuman()[0];
-          const { amount } = (
-            await api.query.balances.locks(address)
-          ).toJSON()[0] as any;
-          const { targets } = nominator[1].toJSON() as any;
-          targets.map((item) => {
-            if (approvalStake[item]) {
-              approvalStake[item] = new BigNumber(amount)
-                .plus(approvalStake[item])
-                .toString();
-            } else {
-              approvalStake[item] = amount;
-            }
-          });
-        }),
-      );
-    }
+    // const approvalStake = {};
+    // if (eras.length > 0) {
+    //   await Promise.all(
+    //     nominators.map(async (nominator) => {
+    //       const address = nominator[0].toHuman()[0];
+    //       const { amount } = (
+    //         await api.query.balances.locks(address)
+    //       ).toJSON()[0] as any;
+    //       const { targets } = nominator[1].toJSON() as any;
+    //       targets.map((item) => {
+    //         if (approvalStake[item]) {
+    //           approvalStake[item] = new BigNumber(amount)
+    //             .plus(approvalStake[item])
+    //             .toString();
+    //         } else {
+    //           approvalStake[item] = amount;
+    //         }
+    //       });
+    //     }),
+    //   );
+    // }
 
-    console.log('eras:', eras.length, Object.keys(approvalStake).length);
+    console.log('eras:', eras.length);
 
     for (let i = 0; i < eras.length; i++) {
       const era = eras[eras.length - i - 1].era_index;
@@ -172,7 +172,7 @@ export default class DotService extends NestSchedule {
               id: address + '-' + era,
               validator: address,
               era,
-              nominator: approvalStake[address],
+              nominator: '0',
               total_bond: new BigNumber(total).toString(),
               is_active,
               reward_points,
@@ -279,10 +279,10 @@ export default class DotService extends NestSchedule {
               )
               .div(kusamaEra.min_bond)
               .div(
-                0.9 +
-                  new BigNumber(approvalStake[address] || '0')
-                    .div(kusamaEra.min_approval_stake)
-                    .toNumber(),
+                0.9,
+                // new BigNumber(approvalStake[address] || '0')
+                //   .div(kusamaEra.min_approval_stake)
+                //   .toNumber(),
               )
               .multipliedBy(1000000000)
               .toString();
@@ -291,7 +291,7 @@ export default class DotService extends NestSchedule {
               id: address + '-' + era,
               validator: address,
               era,
-              nominator: approvalStake[address] || '0',
+              nominator: '0',
               total_bond: new BigNumber(total).toString(),
               is_active,
               reward_points,
