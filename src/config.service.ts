@@ -6,6 +6,10 @@ import {
   KusamaValidatorEra,
   PolkadotEra,
   PolkadotValidatorEra,
+  MoonriverEra,
+  MoonriverValidatorEra,
+  MoonbeamEra,
+  MoonbeamValidatorEra,
 } from './entities/oracle.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -43,6 +47,30 @@ export class ConfigService {
     };
   }
 
+  public getMoonriverDbConfig(): TypeOrmModuleOptions {
+    return {
+      type: 'postgres',
+      host: this.getValue('DB_HOST'),
+      port: parseInt(this.getValue('DB_PORT')),
+      username: this.getValue('DB_USER'),
+      password: this.getValue('DB_PASS'),
+      database: 'slp_vmovr_moonriver',
+      entities: [StakingErapaids],
+    };
+  }
+
+  public getMoonbeamDbConfig(): TypeOrmModuleOptions {
+    return {
+      type: 'postgres',
+      host: this.getValue('DB_HOST'),
+      port: parseInt(this.getValue('DB_PORT')),
+      username: this.getValue('DB_USER'),
+      password: this.getValue('DB_PASS'),
+      database: 'slp_vglmr_slp',
+      entities: [StakingErapaids],
+    };
+  }
+
   public getKusamaMarkDbConfig(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
@@ -56,6 +84,10 @@ export class ConfigService {
         KusamaValidatorEra,
         PolkadotEra,
         PolkadotValidatorEra,
+        MoonriverEra,
+        MoonriverValidatorEra,
+        MoonbeamEra,
+        MoonbeamValidatorEra,
       ],
     };
   }

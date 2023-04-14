@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import KsmService from './ksm.service';
 import DotService from './dot.service';
+import MovrService from './movr.service';
 import { configService } from './config.service';
+import GlmrService from './glmr.service';
 
 @Module({
   imports: [
@@ -17,12 +19,20 @@ import { configService } from './config.service';
       ...configService.getPolkadotDbConfig(),
     }),
     TypeOrmModule.forRoot({
+      name: 'moonriver',
+      ...configService.getMoonriverDbConfig(),
+    }),
+    TypeOrmModule.forRoot({
+      name: 'moonbeam',
+      ...configService.getMoonbeamDbConfig(),
+    }),
+    TypeOrmModule.forRoot({
       name: 'kusama_mark',
       ...configService.getKusamaMarkDbConfig(),
     }),
     ScheduleModule.register(),
   ],
   controllers: [],
-  providers: [KsmService, DotService],
+  providers: [KsmService, DotService, MovrService, GlmrService],
 })
 export class AppModule {}
