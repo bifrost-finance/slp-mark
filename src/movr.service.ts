@@ -140,6 +140,7 @@ export default class MovrService extends NestSchedule {
 
           return {
             id: validator + '-' + era,
+            era,
             validator,
             is_active: true,
             reward_points,
@@ -216,6 +217,7 @@ export default class MovrService extends NestSchedule {
 
           return {
             id: validator + '-' + era,
+            era,
             validator,
             is_active: false,
             identity_level: identity?.judgements?.[0]?.[1],
