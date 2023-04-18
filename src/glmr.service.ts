@@ -134,8 +134,9 @@ export default class GlmrService extends NestSchedule {
           const rank = new BigNumber(average_reward_points)
             .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
             .multipliedBy(0.9 + active_time * 0.1)
-            .div(totalCounted)
-            .multipliedBy(1000000000)
+            .div(
+              new BigNumber(totalCounted).div(100000000000000000000).toString(),
+            )
             .toString();
 
           return {
@@ -211,8 +212,11 @@ export default class GlmrService extends NestSchedule {
           const rank = new BigNumber(average_reward_points)
             .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
             .multipliedBy(0.9)
-            .div(currentMoonbeamEra.min_bond)
-            .multipliedBy(1000000000)
+            .div(
+              new BigNumber(currentMoonbeamEra.min_bond)
+                .div(100000000000000000000)
+                .toString(),
+            )
             .toString();
 
           return {

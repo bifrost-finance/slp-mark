@@ -73,8 +73,8 @@ export default class MovrService extends NestSchedule {
     const candidateInfo =
       await api.query.parachainStaking.candidateInfo.entries();
 
-    for (let i = 0; i < eras.length; i++) {
-      const era = eras[eras.length - i - 1].era_index;
+    for (let i = 0; i < 1; i++) {
+      const era = stakingEras[0].era_index;
       console.log('era:', era);
 
       const allValidators = candidateInfo.map((item) => item[0].toHuman()[0]);
@@ -133,9 +133,14 @@ export default class MovrService extends NestSchedule {
 
           const rank = new BigNumber(average_reward_points)
             .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
-            .multipliedBy(0.9 + active_time * 0.1)
-            .div(totalCounted)
-            .multipliedBy(1000000000)
+            .multipliedBy(
+              new BigNumber(0.9)
+                .plus(new BigNumber(active_time).multipliedBy(0.1))
+                .toString(),
+            )
+            .div(
+              new BigNumber(totalCounted).div(100000000000000000000).toString(),
+            )
             .toString();
 
           return {
@@ -211,8 +216,11 @@ export default class MovrService extends NestSchedule {
           const rank = new BigNumber(average_reward_points)
             .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
             .multipliedBy(0.9)
-            .div(currentMoonriverEra.min_bond)
-            .multipliedBy(1000000000)
+            .div(
+              new BigNumber(currentMoonriverEra.min_bond)
+                .div(100000000000000000000)
+                .toString(),
+            )
             .toString();
 
           return {
@@ -227,11 +235,11 @@ export default class MovrService extends NestSchedule {
         }),
       );
 
-      await this.markDB
-        .getRepository(MoonriverValidatorEra)
-        .save([...validatorsActiveEraData, ...validatorsWaitEraData]);
-      await this.markDB.getRepository(MoonriverEra).save(currentMoonriverEra);
-
+      // await this.markDB
+      //   .getRepository(MoonriverValidatorEra)
+      //   .save([...validatorsActiveEraData, ...validatorsWaitEraData]);
+      // await this.markDB.getRepository(MoonriverEra).save(currentMoonriverEra);
+      console.log(validatorsWaitEraData, validatorsActiveEraData, 123);
       console.log(`moonriver ${era} scan finished!`);
     }
 
