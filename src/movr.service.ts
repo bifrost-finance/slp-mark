@@ -235,11 +235,10 @@ export default class MovrService extends NestSchedule {
         }),
       );
 
-      // await this.markDB
-      //   .getRepository(MoonriverValidatorEra)
-      //   .save([...validatorsActiveEraData, ...validatorsWaitEraData]);
-      // await this.markDB.getRepository(MoonriverEra).save(currentMoonriverEra);
-      console.log(validatorsWaitEraData, validatorsActiveEraData, 123);
+      await this.markDB
+        .getRepository(MoonriverValidatorEra)
+        .save([...validatorsActiveEraData, ...validatorsWaitEraData]);
+      await this.markDB.getRepository(MoonriverEra).save(currentMoonriverEra);
       console.log(`moonriver ${era} scan finished!`);
     }
 
