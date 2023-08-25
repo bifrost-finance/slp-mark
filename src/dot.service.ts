@@ -150,7 +150,7 @@ export default class DotService extends NestSchedule {
             const average_reward_points = new BigNumber(all_reward_points)
               .div(all_reward_points_time || 1)
               .toFixed();
-            const active_rate = new BigNumber(active_time).div(7).toFixed();
+            const active_rate = new BigNumber(active_time).div(14).toFixed();
             const rank = total
               ? new BigNumber(average_reward_points)
                   .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))

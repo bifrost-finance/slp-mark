@@ -263,7 +263,7 @@ export default class KsmService extends NestSchedule {
             const average_reward_points = new BigNumber(all_reward_points)
               .div(all_reward_points_time || 1)
               .toFixed();
-            const active_rate = new BigNumber(active_time).div(28).toFixed();
+            const active_rate = new BigNumber(active_time).div(56).toFixed();
             const rank = new BigNumber(average_reward_points)
               .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
               .multipliedBy(100 - commission.split('.')[0])
