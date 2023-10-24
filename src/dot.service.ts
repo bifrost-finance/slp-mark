@@ -31,9 +31,7 @@ export default class DotService extends NestSchedule {
   async polkadotScan() {
     console.log('polkadot staking scan start!');
 
-    const wsProvider = new WsProvider(
-      'wss://polkadot.api.onfinality.io/public-ws',
-    );
+    const wsProvider = new WsProvider('wss://rpc.polkadot.io');
     const api = await ApiPromise.create({ provider: wsProvider });
 
     const stakingEras = await this.polkadotSlpDB
