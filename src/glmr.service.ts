@@ -32,7 +32,8 @@ export default class GlmrService extends NestSchedule {
     console.log('moonbeam staking scan start!');
 
     const wsProvider = new WsProvider(
-      'wss://moonbeam.api.onfinality.io/public-ws',
+      // 'wss://moonbeam.api.onfinality.io/public-ws',
+      'wss://moonbeam.public.blastapi.io',
     );
     const api = await ApiPromise.create({ provider: wsProvider });
 

@@ -32,7 +32,8 @@ export default class MovrService extends NestSchedule {
     console.log('moonriver staking scan start!');
 
     const wsProvider = new WsProvider(
-      'wss://moonriver.api.onfinality.io/public-ws',
+      // 'wss://moonriver.api.onfinality.io/public-ws',
+      'wss://moonbase-alpha.public.blastapi.io',
     );
     const api = await ApiPromise.create({ provider: wsProvider });
 
