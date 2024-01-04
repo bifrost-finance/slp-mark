@@ -33,7 +33,7 @@ export default class GlmrService extends NestSchedule {
 
     const wsProvider = new WsProvider(
       // 'wss://moonbeam.api.onfinality.io/public-ws',
-      'wss://moonbeam.public.blastapi.io',
+      'wss://moonbeam.unitedbloc.com',
     );
     const api = await ApiPromise.create({ provider: wsProvider });
 

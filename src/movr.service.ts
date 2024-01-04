@@ -33,7 +33,7 @@ export default class MovrService extends NestSchedule {
 
     const wsProvider = new WsProvider(
       // 'wss://moonriver.api.onfinality.io/public-ws',
-      'wss://moonbase-alpha.public.blastapi.io',
+      'wss://moonriver.unitedbloc.com',
     );
     const api = await ApiPromise.create({ provider: wsProvider });
 
