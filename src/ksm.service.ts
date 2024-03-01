@@ -31,7 +31,7 @@ export default class KsmService extends NestSchedule {
   async kusamaScan() {
     console.log('kusama staking scan start!');
 
-    const wsProvider = new WsProvider('wss://kusama-rpc.polkadot.io');
+    const wsProvider = new WsProvider('wss://ksm-rpc.stakeworld.io');
     const api = await ApiPromise.create({ provider: wsProvider });
 
     const stakingEras = await this.kusamaSlpDB
