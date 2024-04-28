@@ -118,10 +118,7 @@ export default class KsmService extends NestSchedule {
                 address,
               )) as any;
             const total =
-              erasStakers?.total ||
-              erasStaker?.[0]?.[1]
-                ?.toJSON()
-                ?.pageTotalerasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
+              erasStakers?.total || erasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
 
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(KusamaValidatorEra)
