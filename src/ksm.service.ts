@@ -26,8 +26,8 @@ export default class KsmService extends NestSchedule {
   }
 
   //每2小时调用一次
-  @Cron('0 */2 * * *')
-  //@Timeout(0)
+  //@Cron('0 */2 * * *')
+  @Timeout(0)
   async kusamaScan() {
     console.log('kusama staking scan start!');
 
@@ -117,10 +117,11 @@ export default class KsmService extends NestSchedule {
                 era,
                 address,
               )) as any;
+            const totalBond = erasStaker?.[0]?.[1]?.toJSON()
+              ? erasStaker?.[0]?.[1]?.toJSON()?.pageTotal
+              : erasStakers?.total;
             const total =
-              erasStakers?.total ||
-              erasStaker?.[0]?.[1]?.toJSON()?.pageTotal ||
-              0;
+              new BigNumber(totalBond).toString() !== 'NaN' ? totalBond : '0';
 
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(KusamaValidatorEra)
