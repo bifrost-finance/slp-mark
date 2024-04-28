@@ -113,16 +113,15 @@ export default class DotService extends NestSchedule {
             const erasStakers = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
-            const erasStaker =
+            const erasStakersPaged =
               (await api.query.staking.erasStakersPaged.entries(
                 era,
                 address,
               )) as any;
-            const totalBond = erasStaker?.[0]?.[1]?.toJSON()
-              ? erasStaker?.[0]?.[1]?.toJSON()?.pageTotal
-              : erasStakers?.total;
             const total =
-              new BigNumber(totalBond).toString() !== 'NaN' ? totalBond : '0';
+              erasStakersPaged?.[0]?.[1]?.toJSON()?.pageTotal ||
+              erasStakers?.total ||
+              '0';
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()
@@ -238,16 +237,15 @@ export default class DotService extends NestSchedule {
             const erasStakers = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
-            const erasStaker =
+            const erasStakersPaged =
               (await api.query.staking.erasStakersPaged.entries(
                 era,
                 address,
               )) as any;
             const total =
+              erasStakersPaged?.[0]?.[1]?.toJSON()?.pageTotal ||
               erasStakers?.total ||
-              erasStaker?.[0]?.[1]
-                ?.toJSON()
-                ?.pageTotalerasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
+              '0';
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()

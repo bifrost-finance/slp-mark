@@ -112,16 +112,15 @@ export default class KsmService extends NestSchedule {
             const erasStakers = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
-            const erasStaker =
+            const erasStakersPaged =
               (await api.query.staking.erasStakersPaged.entries(
                 era,
                 address,
               )) as any;
-            const totalBond = erasStaker?.[0]?.[1]?.toJSON()
-              ? erasStaker?.[0]?.[1]?.toJSON()?.pageTotal
-              : erasStakers?.total;
             const total =
-              new BigNumber(totalBond).toString() !== 'NaN' ? totalBond : '0';
+              erasStakersPaged?.[0]?.[1]?.toJSON()?.pageTotal ||
+              erasStakers?.total ||
+              '0';
 
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(KusamaValidatorEra)
@@ -236,14 +235,18 @@ export default class KsmService extends NestSchedule {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
             const identity = await getIdentity(address, api);
-            const erasStaker =
+            const erasStakers = (
+              await api.query.staking.erasStakers(era, address)
+            ).toJSON() as any;
+            const erasStakersPaged =
               (await api.query.staking.erasStakersPaged.entries(
                 era,
                 address,
               )) as any;
-            const total = erasStaker?.[0]?.[1]
-              ?.toJSON()
-              ?.pageTotalerasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
+            const total =
+              erasStakersPaged?.[0]?.[1]?.toJSON()?.pageTotal ||
+              erasStakers?.total ||
+              '0';
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(KusamaValidatorEra)
               .createQueryBuilder()
@@ -307,7 +310,7 @@ export default class KsmService extends NestSchedule {
               era,
               //nominator: approvalStake[address] || '0',
               nominator: '0',
-              total_bond: new BigNumber(total).toString(),
+              total_bond: new BigNumber(total || 0).toString(),
               is_active,
               reward_points,
               identity_level: identity?.judgements?.[0]?.[1],
