@@ -110,9 +110,14 @@ export default class DotService extends NestSchedule {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
             const identity = await getIdentity(address, api);
-            const { total } = (
-              await api.query.staking.erasStakers(era, address)
-            ).toJSON() as any;
+            const erasStaker =
+              (await api.query.staking.erasStakersPaged.entries(
+                era,
+                address,
+              )) as any;
+            const total = erasStaker?.[0]?.[1]
+              ?.toJSON()
+              ?.pageTotalerasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()
@@ -225,9 +230,14 @@ export default class DotService extends NestSchedule {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
             const identity = await getIdentity(address, api);
-            const { total } = (
-              await api.query.staking.erasStakers(era, address)
-            ).toJSON() as any;
+            const erasStaker =
+              (await api.query.staking.erasStakersPaged.entries(
+                era,
+                address,
+              )) as any;
+            const total = erasStaker?.[0]?.[1]
+              ?.toJSON()
+              ?.pageTotalerasStaker?.[0]?.[1]?.toJSON()?.pageTotal;
             const validatorHistory = await this.kusamaMarkDB
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()
