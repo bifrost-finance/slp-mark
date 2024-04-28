@@ -220,7 +220,7 @@ export default class KsmService extends NestSchedule {
         average_bond,
         min_bond: orderBy(activeValidatorData, ({ total_bond }) =>
           new BigNumber(total_bond).toNumber(),
-        )[0].total_bond,
+        ).filter((v) => v.total_bond !== '0')?.[0].total_bond,
         min_approval_stake: orderBy(activeValidatorData, ({ nominator }) =>
           new BigNumber(nominator).toNumber(),
         )[0].nominator,
