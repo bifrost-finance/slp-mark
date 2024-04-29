@@ -26,8 +26,8 @@ export default class DotService extends NestSchedule {
   }
 
   //每2小时调用一次
-  //@Cron('0 */2 * * *')
-  @Timeout(0)
+  @Cron('0 */2 * * *')
+  //@Timeout(0)
   async polkadotScan() {
     console.log('polkadot staking scan start!');
 
