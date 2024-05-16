@@ -293,7 +293,7 @@ export default class DotService extends NestSchedule {
                   ) /
                     10,
               )
-              .div(kusamaEra.min_bond)
+              .div(kusamaEra.average_bond)
               .div(
                 0.9,
                 // new BigNumber(approvalStake[address] || '0')
