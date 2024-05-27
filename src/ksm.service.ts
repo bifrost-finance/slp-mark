@@ -132,7 +132,7 @@ export default class KsmService extends NestSchedule {
               .orderBy('era', 'DESC')
               .getMany();
             const { all_reward_points, active_time, all_reward_points_time } =
-              validatorHistory.reduce(
+              validatorHistory.slice(0, 28).reduce(
                 (acc, item) => {
                   if (item.reward_points !== '0') {
                     acc.all_reward_points =
@@ -163,12 +163,12 @@ export default class KsmService extends NestSchedule {
                   .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
                   .multipliedBy(100 - commission.split('.')[0])
                   .multipliedBy(
-                    0.9 +
+                    0.8 +
                       Math.pow(
-                        new BigNumber(active_time).div(28).toNumber(),
-                        1 / 3,
+                        new BigNumber(active_time).div(14).toNumber(),
+                        1 / 2,
                       ) /
-                        10,
+                        5,
                   )
                   .div(total)
                   .multipliedBy(1000000000)
@@ -257,7 +257,7 @@ export default class KsmService extends NestSchedule {
               .orderBy('era', 'DESC')
               .getMany();
             const { all_reward_points, active_time, all_reward_points_time } =
-              validatorHistory.reduce(
+              validatorHistory.slice(0, 28).reduce(
                 (acc, item) => {
                   if (item.reward_points !== '0') {
                     acc.all_reward_points =
@@ -282,17 +282,17 @@ export default class KsmService extends NestSchedule {
             const average_reward_points = new BigNumber(all_reward_points)
               .div(all_reward_points_time || 1)
               .toFixed();
-            const active_rate = new BigNumber(active_time).div(56).toFixed();
+            const active_rate = new BigNumber(active_time).div(28).toFixed();
             const rank = new BigNumber(average_reward_points)
               .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
               .multipliedBy(100 - commission.split('.')[0])
               .multipliedBy(
-                0.9 +
+                0.8 +
                   Math.pow(
-                    new BigNumber(active_time).div(28).toNumber(),
-                    1 / 3,
+                    new BigNumber(active_time).div(14).toNumber(),
+                    1 / 2,
                   ) /
-                    10,
+                    5,
               )
               .div(kusamaEra.average_bond)
               // .div(

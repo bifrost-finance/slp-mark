@@ -38,14 +38,14 @@ export default class DotService extends NestSchedule {
       .getRepository(StakingErapaids)
       .createQueryBuilder()
       .orderBy('block_timestamp', 'DESC')
-      .limit(14)
+      .limit(28)
       .getMany();
 
     await this.kusamaMarkDB
       .getRepository(PolkadotEra)
       .createQueryBuilder()
       .where('CAST(era AS INT) < :era', {
-        era: Number(stakingEras[0].era_index) - 14,
+        era: Number(stakingEras[0].era_index) - 28,
       })
       .delete()
       .execute();
@@ -53,7 +53,7 @@ export default class DotService extends NestSchedule {
       .getRepository(PolkadotValidatorEra)
       .createQueryBuilder()
       .where('CAST(era AS INT) < :era', {
-        era: Number(stakingEras[0].era_index) - 14,
+        era: Number(stakingEras[0].era_index) - 28,
       })
       .delete()
       .execute();
@@ -126,13 +126,13 @@ export default class DotService extends NestSchedule {
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()
               .where('CAST(era AS INT) > :era AND validator =:validator', {
-                era: Number(era) - 7,
+                era: Number(era) - 14,
                 validator: address,
               })
               .orderBy('era', 'DESC')
               .getMany();
             const { all_reward_points, active_time, all_reward_points_time } =
-              validatorHistory.reduce(
+              validatorHistory.slice(0, 14).reduce(
                 (acc, item) => {
                   if (item.reward_points !== '0') {
                     acc.all_reward_points =
@@ -163,12 +163,12 @@ export default class DotService extends NestSchedule {
                   .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
                   .multipliedBy(100 - commission.split('.')[0])
                   .multipliedBy(
-                    0.9 +
+                    0.8 +
                       Math.pow(
-                        new BigNumber(active_time).div(7).toNumber(),
-                        1 / 3,
+                        new BigNumber(active_time).div(14).toNumber(),
+                        1 / 2,
                       ) /
-                        10,
+                        5,
                   )
                   .div(total)
                   .multipliedBy(1000000000)
@@ -250,13 +250,13 @@ export default class DotService extends NestSchedule {
               .getRepository(PolkadotValidatorEra)
               .createQueryBuilder()
               .where('CAST(era AS INT) > :era AND validator =:validator', {
-                era: Number(era) - 7,
+                era: Number(era) - 14,
                 validator: address,
               })
               .orderBy('era', 'DESC')
               .getMany();
             const { all_reward_points, active_time, all_reward_points_time } =
-              validatorHistory.reduce(
+              validatorHistory.slice(0, 14).reduce(
                 (acc, item) => {
                   if (item.reward_points !== '0') {
                     acc.all_reward_points =
@@ -281,17 +281,17 @@ export default class DotService extends NestSchedule {
             const average_reward_points = new BigNumber(all_reward_points)
               .div(all_reward_points_time || 1)
               .toFixed();
-            const active_rate = new BigNumber(active_time).div(7).toFixed();
+            const active_rate = new BigNumber(active_time).div(14).toFixed();
             const rank = new BigNumber(average_reward_points)
               .multipliedBy(renderPoint(identity?.judgements?.[0]?.[1]))
               .multipliedBy(100 - commission.split('.')[0])
               .multipliedBy(
-                0.9 +
+                0.8 +
                   Math.pow(
-                    new BigNumber(active_time).div(7).toNumber(),
-                    1 / 3,
+                    new BigNumber(active_time).div(14).toNumber(),
+                    1 / 2,
                   ) /
-                    10,
+                    5,
               )
               .div(kusamaEra.average_bond)
               .div(
