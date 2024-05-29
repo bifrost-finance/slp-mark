@@ -38,7 +38,6 @@ import MantaService from './manta.service';
     ScheduleModule.register(),
   ],
   controllers: [],
-  // providers: [KsmService, DotService, MovrService, GlmrService,MantaService],
-  providers: [MantaService],
+  providers: [KsmService, DotService, MovrService, GlmrService, MantaService],
 })
 export class AppModule {}

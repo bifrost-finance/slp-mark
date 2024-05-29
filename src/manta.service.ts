@@ -25,8 +25,8 @@ export default class MantaService extends NestSchedule {
   }
 
   //每3小时调用一次
-  //@Cron('0 */3 * * *')
-  @Timeout(0)
+  @Cron('0 */3 * * *')
+  //@Timeout(0)
   async mantaScan() {
     console.log('manta staking scan start!');
 
