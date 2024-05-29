@@ -107,6 +107,40 @@ export class MoonbeamValidatorEra {
 }
 
 @Entity()
+export class MantaEra {
+  @PrimaryColumn()
+  era: string;
+  @Column()
+  average_reward_points: string;
+  @Column()
+  average_bond: string;
+  @Column()
+  min_bond: string;
+}
+
+@Entity()
+export class MantaValidatorEra {
+  @PrimaryColumn()
+  id: string;
+  @Column()
+  era: string;
+  @Column()
+  is_active: boolean;
+  @Column()
+  identity_level: string;
+  @Column()
+  total_bond: string;
+  @Column()
+  reward_points: string;
+  @Column()
+  validator: string;
+  @Column()
+  average_reward_points: string;
+  @Column()
+  rank: string;
+}
+
+@Entity()
 export class KusamaValidatorEra {
   @PrimaryColumn()
   id: string;

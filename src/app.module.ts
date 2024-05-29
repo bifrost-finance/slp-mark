@@ -7,6 +7,7 @@ import DotService from './dot.service';
 import MovrService from './movr.service';
 import { configService } from './config.service';
 import GlmrService from './glmr.service';
+import MantaService from './manta.service';
 
 @Module({
   imports: [
@@ -27,12 +28,17 @@ import GlmrService from './glmr.service';
       ...configService.getMoonbeamDbConfig(),
     }),
     TypeOrmModule.forRoot({
+      name: 'manta',
+      ...configService.getMantaDbConfig(),
+    }),
+    TypeOrmModule.forRoot({
       name: 'kusama_mark',
       ...configService.getKusamaMarkDbConfig(),
     }),
     ScheduleModule.register(),
   ],
   controllers: [],
-  providers: [KsmService, DotService, MovrService, GlmrService],
+  // providers: [KsmService, DotService, MovrService, GlmrService,MantaService],
+  providers: [MantaService],
 })
 export class AppModule {}

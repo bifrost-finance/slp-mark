@@ -10,6 +10,8 @@ import {
   MoonriverValidatorEra,
   MoonbeamEra,
   MoonbeamValidatorEra,
+  MantaEra,
+  MantaValidatorEra,
 } from './entities/oracle.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -70,6 +72,18 @@ export class ConfigService {
       entities: [StakingErapaids],
     };
   }
+  public getMantaDbConfig(): TypeOrmModuleOptions {
+    return {
+      type: 'postgres',
+      host: this.getValue('DB_HOST'),
+      port: parseInt(this.getValue('DB_PORT')),
+      username: this.getValue('DB_USER'),
+      password: this.getValue('DB_PASS'),
+      database: 'slp_manta_subql',
+      schema: 'app',
+      entities: [StakingErapaids],
+    };
+  }
 
   public getKusamaMarkDbConfig(): TypeOrmModuleOptions {
     return {
@@ -88,6 +102,8 @@ export class ConfigService {
         MoonriverValidatorEra,
         MoonbeamEra,
         MoonbeamValidatorEra,
+        MantaEra,
+        MantaValidatorEra,
       ],
     };
   }
