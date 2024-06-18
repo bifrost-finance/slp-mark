@@ -114,7 +114,8 @@ export default class MovrService extends NestSchedule {
               (acc, item) => {
                 if (item.reward_points !== '0') {
                   acc.all_reward_points =
-                    acc.all_reward_points + Number(item.reward_points);
+                    acc.all_reward_points +
+                    Number(item.reward_points.split(',').join(''));
                   acc.all_reward_points_time = acc.all_reward_points_time + 1;
                 }
                 if (!!item.is_active) {
@@ -196,7 +197,8 @@ export default class MovrService extends NestSchedule {
               (acc, item) => {
                 if (item.reward_points !== '0') {
                   acc.all_reward_points =
-                    acc.all_reward_points + Number(item.reward_points);
+                    acc.all_reward_points +
+                    Number(item.reward_points.split(',').join(''));
                   acc.all_reward_points_time = acc.all_reward_points_time + 1;
                 }
                 if (!!item.is_active) {
