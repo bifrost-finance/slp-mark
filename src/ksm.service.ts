@@ -34,6 +34,9 @@ export default class KsmService extends NestSchedule {
     const wsProvider = new WsProvider('wss://ksm-rpc.stakeworld.io');
     const api = await ApiPromise.create({ provider: wsProvider });
 
+    const provider = new WsProvider('wss://ksm-rpc.stakeworld.io/people');
+    const apiPeople = await ApiPromise.create({ provider });
+
     const stakingEras = await this.kusamaSlpDB
       .getRepository(StakingErapaids)
       .createQueryBuilder()
@@ -108,7 +111,7 @@ export default class KsmService extends NestSchedule {
           if (is_active) {
             const { commission } = validator[1].toHuman() as any;
             const reward_points = rewardValidators[address] || '0';
-            const identity = await getIdentity(address, api);
+            const identity = await getIdentity(address, apiPeople);
             const erasStakers = (
               await api.query.staking.erasStakers(era, address)
             ).toJSON() as any;
